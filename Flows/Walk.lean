@@ -104,7 +104,6 @@ def Digraph.Walk.edgeList {G : Digraph V} (W : G.Walk) : List (V × V) :=
       (v,w) :: edgeList W.tail
   termination_by W.support.length
   decreasing_by
-
     simp [Walk.tail, hW]
 
 lemma isWalkEdge_vert_support_left (G : Digraph V)
