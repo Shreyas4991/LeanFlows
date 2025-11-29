@@ -93,6 +93,7 @@ def flowValue (N : FlowNetwork V)
   (_ : FeasibleFlow N flow) :=
   outFlow flow N.s
 
+omit [Fintype V] in
 def residualCapacity (N : FlowNetwork V) (flow : V → V → ℝ) (v w : V) : ℝ :=
   N.edgeCap v w - flow v w
 
@@ -154,51 +155,3 @@ lemma Digraph.Walk.bottleneckWeight_singleton
   fun_induction edgeList <;> simp_all
 
 def uncurryFlow (flow : V → V → ℝ) : V × V → ℝ := fun (v,w) => flow v w
-
-
-open Classical in
-noncomputable def augmentFlow
-  (N : FlowNetwork V)
-  (W : N.G.Walk)
-  (flow : V → V → ℝ) :
-  V → V → ℝ :=
-    let bottleneckWeight := bottleneckWeight N W flow
-    fun u v =>
-      if isWalkEdge N.G W u v
-      then (flow u v) + bottleneckWeight
-      else flow u v
-
-#check List.argmin_eq_some_iff
-
-omit [Fintype V] in
-lemma augmentedFlow_is_Valid
-  [DecidableEq V]
-  (N : FlowNetwork V)
-  (W : N.G.Walk)
-  (flow : V → V → ℝ)
-  (hWCap : ∀ v w : V, EdgeCapacityConstrained N flow v w):
-  ∀ v w : V, EdgeCapacityConstrained N (augmentFlow N W flow) v w := by
-  intro v w
-  simp_all [augmentFlow]
-  split
-  · set bestEdge := List.argmin (fun x ↦ residualCapacity N flow x.1 x.2) W.edgeList with hBestEdge
-    cases hb : bestEdge with
-    | none =>
-        simp
-        apply hWCap
-    | some val =>
-        simp_all
-        -- simp_rw [residualCapacity.eq_def] at hb
-        -- simp_rw [residualCapacity.eq_def]
-        have min_proof : residualCapacity N flow val.1 val.2
-          ≤ residualCapacity N flow v w := by
-            rename_i hWalkEdge
-            have h₂ := (List.argmin_eq_some_iff.mp hBestEdge.symm).2.1 (v,w) hWalkEdge
-            simp at h₂
-            exact h₂
-        trans (flow v w + residualCapacity N flow v w)
-        · linarith
-        · rw [residualCapacity.eq_def]
-          ring_nf
-          rfl
-  · apply hWCap

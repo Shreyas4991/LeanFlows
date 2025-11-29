@@ -10,6 +10,13 @@ import Mathlib
 
 open Digraph
 
+def Digraph.outNeighborSet (G : Digraph V) (v : V) : Set V :=
+  {w : V | G.Adj v w}
+
+def Digraph.inNeighborSet (G : Digraph V) (v : V) : Set V :=
+  {w : V | G.Adj w v}
+
+
 structure Digraph.Walk (G : Digraph V) where
   support : List V
   chainAdj : List.IsChain G.Adj support
@@ -152,6 +159,10 @@ lemma isWalkEdge_vert_support_right (G : Digraph V)
 
 
 
-abbrev isWalkEdge (G : Digraph V)
+abbrev Digraph.Walk.isWalkEdge {G : Digraph V}
   (W : G.Walk) (x y : V) :=
     (x,y) ∈ W.edgeList
+
+abbrev Digraph.Path.isPathEdge {G : Digraph V}
+  (P : G.Path) (x y : V) :=
+    (x,y) ∈ P.edgeList
