@@ -25,9 +25,9 @@ def initFlow : V → V → ℝ :=
   fun _ _ => 0
 
 
-def IsUnsaturatedWalk (N : FlowNetwork V)
-  (W : N.G.Path) (flow : V → V → ℝ) :=
-    ∀ e ∈ W.edgeList, residualCapacity N flow e.fst e.snd > 0
+def Digraph.Path.IsUnsaturatedPath {N : FlowNetwork V}
+  (P : N.G.Path) (flow : V → V → ℝ) :=
+    ∀ e ∈ P.edgeList, residualCapacity N flow e.fst e.snd > 0
 
 
 open Classical in
@@ -84,7 +84,7 @@ noncomputable def augmentationStep
   (currentFlow : V → V → ℝ)
   (P : N.G.Path) :
   V → V → ℝ :=
-    if IsUnsaturatedWalk N P currentFlow
+    if P.IsUnsaturatedPath currentFlow
     then augmentFlow N P currentFlow
     else currentFlow
 
@@ -93,14 +93,25 @@ noncomputable def augmentationStep
 noncomputable def FordFulkersonRec
   (N : FlowNetwork V) (search_paths : List N.G.Path)
   (currentFlow : V → V → ℝ) : (V → V → ℝ) :=
-  match search_paths with
+  match h_search_paths : search_paths with
   | [] => currentFlow
   | w :: rest => FordFulkersonRec N rest (augmentationStep N currentFlow w)
 
 /--
 Recall that Ford Fulkerson doesn't actually specify how to find paths.
 Thus we just find all paths and filter out the unsaturated ones.
+It's a separate issue to enumerate these paths and show the O(|E||max-flow|) bound
 -/
 noncomputable def FordFulkerson
   (N : FlowNetwork V) (iF : Fintype (N.G.Path)) :=
   FordFulkersonRec N iF.elems.toList initFlow
+
+lemma FordFulkerson_saturates_all_paths
+  (N : FlowNetwork V) (iF : Fintype (N.G.Path)) :
+  ∀ P : N.G.Path, ¬ P.IsUnsaturatedPath (FordFulkerson N iF) := by
+  intro P hP
+  unfold Digraph.Path.IsUnsaturatedPath at hP
+  simp [FordFulkerson] at hP
+  set ff_op := (FordFulkersonRec N Fintype.elems.toList initFlow) with hff
+
+  sorry
