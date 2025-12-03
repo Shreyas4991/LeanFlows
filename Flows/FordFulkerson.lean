@@ -89,6 +89,9 @@ noncomputable def augmentationStep
     else currentFlow
 
 
+structure UnsaturatedPathFinder (N : FlowNetwork V) where
+  flow_finder : V → N.G.Walk -- take a source node and return a flow
+
 
 noncomputable def FordFulkersonRec
   (N : FlowNetwork V) (search_paths : List N.G.Path)

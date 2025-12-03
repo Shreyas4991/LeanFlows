@@ -21,7 +21,13 @@ structure Digraph.Walk (G : Digraph V) where
   support : List V
   chainAdj : List.IsChain G.Adj support
 
+def Digraph.Walk.startsAt {G : Digraph V} (W : G.Walk)
+  (h : W.support ≠ []) : V :=
+  W.support.head h
 
+def Digraph.Walk.endsAt {G : Digraph V} (W : G.Walk)
+  (h : W.support ≠ []) : V :=
+  W.support.getLast h
 
 def IsCircuit {G : Digraph V} (W : G.Walk) : Prop :=
   W.support.length > 2 ∧ W.support.head = W.support.getLast
@@ -166,3 +172,6 @@ abbrev Digraph.Walk.isWalkEdge {G : Digraph V}
 abbrev Digraph.Path.isPathEdge {G : Digraph V}
   (P : G.Path) (x y : V) :=
     (x,y) ∈ P.edgeList
+
+abbrev Digraph.endNotedWalks {G : Digraph V} (s t : V) :=
+  {w : G.Walk // w.support ≠ [] ∧ (w.startsAt s) ∧ (w.endsAt t)}
