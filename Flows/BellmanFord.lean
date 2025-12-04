@@ -66,7 +66,10 @@ abbrev isEdgeList (G : Digraph V) (eL : List <| V × V) :=
 noncomputable def BellmanFord
   [Fintype V]
   (W : WDigraph V)
+  (source : V)
   (eList : List <| V × V)
   (_ : isEdgeList V W.toDigraph eList)
-  :=
-  iterate (Fintype.card V) (fun ds => relaxEdge V W ds eList)
+  :=  iterate
+        (Fintype.card V)
+        (fun ds => relaxEdge V W ds eList)
+        (initialise V source)
