@@ -173,5 +173,5 @@ abbrev Digraph.Path.isPathEdge {G : Digraph V}
   (P : G.Path) (x y : V) :=
     (x,y) ∈ P.edgeList
 
-abbrev Digraph.endNotedWalks {G : Digraph V} (s t : V) :=
-  {w : G.Walk // w.support ≠ [] ∧ (w.startsAt s) ∧ (w.endsAt t)}
+abbrev Digraph.PathFromTo {G : Digraph V} (P : G.Path) (h : P.support ≠ []) (s t : V) :=
+  P.startsAt h = s  ∧ P.endsAt h = t
