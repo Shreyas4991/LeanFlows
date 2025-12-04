@@ -175,3 +175,7 @@ abbrev Digraph.Path.isPathEdge {G : Digraph V}
 
 abbrev Digraph.PathFromTo {G : Digraph V} (P : G.Path) (h : P.support ≠ []) (s t : V) :=
   P.startsAt h = s  ∧ P.endsAt h = t
+
+def Digraph.Walk.length {G : Digraph V} (W : G.Walk) := W.support.length
+
+def Digraph.Path.length {G : Digraph V} (P : G.Path) := P.support.length
