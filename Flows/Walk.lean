@@ -30,7 +30,7 @@ def Digraph.Walk.endsAt {G : Digraph V} (W : G.Walk)
   W.support.getLast h
 
 def IsCircuit {G : Digraph V} (W : G.Walk) : Prop :=
-  W.support.length > 2 ∧ W.support.head = W.support.getLast
+  W.support.length > 2 ∧ G.Adj W.support.head W.support.getLast
 
 
 structure Digraph.Path (G : Digraph V) extends Walk G where
